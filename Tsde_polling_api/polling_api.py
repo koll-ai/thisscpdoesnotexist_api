@@ -160,7 +160,7 @@ def next_round():
         with open(path_prefix + 'current_scp.txt', 'w') as f:
             f.write(str(scp_number+1))
 
-        with open(path_prefix + "last.txt", "r") as f:
+        with open(path_prefix + "last.txt", "r", encoding='utf-8') as f:
             # f.write()
             last_scp_str = f.read().rstrip()
 
@@ -327,7 +327,7 @@ def add_prompt():
 @app.route('/last_scp_desc/',  methods=['GET'])
 def last_scp_desc():
 
-    with open(path_prefix + "last.txt", "r") as f:
+    with open(path_prefix + "last.txt", "r", encoding='utf-8') as f:
         last_scp_str = f.read()
 
     return str(last_scp_str)
