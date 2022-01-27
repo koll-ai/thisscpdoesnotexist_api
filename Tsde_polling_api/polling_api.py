@@ -11,6 +11,8 @@ from flask import Flask, request, Response
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit
 
+path_prefix = '/var/www/Tsde_polling_api/Tsde_polling_api/'
+
 load_dotenv()
 
 OPENAI_KEY = os.getenv("OPENAI_KEY")
@@ -32,16 +34,16 @@ openai.api_key = OPENAI_KEY
 print("connected to openAI")
 
 last_scp_str = ""
-with open("last.txt", "r") as f:
+with open(path_prefix + "last.txt", "r") as f:
     last_scp_str = f.read().rstrip()
 
-with open('current_scp.txt') as f:
+with open(path_prefix + 'current_scp.txt') as f:
     scp_number = int(f.read().rstrip())
 
 # Set initial variable with savec file or with initial value otherwise
 
 try:
-    with open(initial_data_path, "r") as f:
+    with open(path_prefix + initial_data_path, "r") as f:
         params = json.load(f)
 except FileNotFoundError:
     params = dict(next_time=time.time() + 3600,
@@ -152,10 +154,10 @@ def next_round():
         scp_number += 1
 
         # save scp number
-        with open('current_scp.txt', 'w') as f:
+        with open(path_prefix + 'current_scp.txt', 'w') as f:
             f.write(str(scp_number+1))
 
-        with open("last.txt", "r") as f:
+        with open(path_prefix + "last.txt", "r") as f:
             # f.write()
             last_scp_str = f.read().rstrip()
 
@@ -189,7 +191,7 @@ def upvote():
 
     try:
         # open file
-        with open('./upvotes.json', 'r') as json_file:
+        with open(path_prefix + './upvotes.json', 'r') as json_file:
             data = json.load(json_file)
     except (FileNotFoundError, JSONDecodeError) as e:
         # file does not exist, create it
@@ -207,7 +209,7 @@ def upvote():
             "ips": [ip]
         }
 
-    with open('upvotes.json', 'w') as outfile:
+    with open(path_prefix + 'upvotes.json', 'w') as outfile:
         json.dump(data, outfile)
 
     return Response(response="upvote counted", status=200)
@@ -217,7 +219,7 @@ def upvote():
 def get_upvotes():
     try:
         # open file
-        with open('./upvotes.json', 'r') as json_file:
+        with open(path_prefix + './upvotes.json', 'r') as json_file:
             data = json.load(json_file)
     except (FileNotFoundError, JSONDecodeError) as e:
         # file does not exist, create it
@@ -322,7 +324,7 @@ def add_prompt():
 @app.route('/last_scp_desc/',  methods=['GET'])
 def last_scp_desc():
 
-    with open("last.txt", "r") as f:
+    with open(path_prefix + "last.txt", "r") as f:
         last_scp_str = f.read()
 
     return str(last_scp_str)
@@ -343,7 +345,7 @@ def next_time_():
 def save_data():
     k = request.args.get('key')
     if k == NEXT_ROUND_KEY:
-        with open(initial_data_path, "w") as f:
+        with open(path_prefix + initial_data_path, "w") as f:
             data = dict(next_time=next_time,
                         poll=poll,
                         votes=votes,
@@ -351,7 +353,7 @@ def save_data():
                         )
             json.dump(data, f)
 
-        with open("current_scp.txt", "w") as f:
+        with open(path_prefix + "current_scp.txt", "w") as f:
             f.write(str(scp_number))
 
     return "ok"
@@ -382,7 +384,7 @@ def generate_scp():
     if key == NEXT_ROUND_KEY:
         os.system(generator_command)
 
-        with open(initial_data_path, "w") as f:
+        with open(path_prefix + initial_data_path, "w") as f:
             data = dict(next_time=next_time,
                         poll=[],
                         votes=dict(),
