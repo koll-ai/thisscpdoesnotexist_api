@@ -13,7 +13,10 @@ from flask_socketio import SocketIO, emit
 
 path_prefix = '/var/www/Tsde_polling_api/Tsde_polling_api/'
 
-load_dotenv()
+print('AAAAAAAAAAAAAAAAAAAAAA')
+print(os.getcwd())
+
+load_dotenv(path_prefix + ".env")
 
 OPENAI_KEY = os.getenv("OPENAI_KEY")
 NEXT_ROUND_KEY = os.getenv("NEXT_ROUND_KEY")
