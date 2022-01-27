@@ -37,7 +37,7 @@ openai.api_key = OPENAI_KEY
 print("connected to openAI")
 
 last_scp_str = ""
-with open(path_prefix + "last.txt", "r") as f:
+with open(path_prefix + "last.txt", "r", encoding='utf-8') as f:
     last_scp_str = f.read().rstrip()
 
 with open(path_prefix + 'current_scp.txt') as f:
