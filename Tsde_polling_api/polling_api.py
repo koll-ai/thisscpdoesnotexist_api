@@ -11,6 +11,8 @@ from flask import Flask, request, Response
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit
 
+import datetime
+
 path_prefix = '/var/www/Tsde_polling_api/Tsde_polling_api/'
 
 print('AAAAAAAAAAAAAAAAAAAAAA')
@@ -64,6 +66,9 @@ poll = params['poll']
 votes = params['votes']
 submitted_ips_count = params['submitted_ips_count']
 
+
+if not os.path.exists(path_prefix + 'history'):
+    os.mkdir(path_prefix + 'history')
 
 def getSafetyLabel(text, username):
     content_to_classify = text
@@ -155,6 +160,17 @@ def next_round():
         submitted_ips_count = dict()
         next_time = int(nt)
         scp_number += 1
+
+        #save poll data
+        date_time = datetime.now().strftime("%m-%d-%Y-%H-%M-%S")
+        with open(f"{path_prefix}'history/'{date_time}_history.json", "w") as f:
+            data = dict(next_time=next_time,
+                        poll=poll,
+                        votes=votes,
+                        submitted_ips_count=submitted_ips_count
+                        )
+            json.dump(data, f)
+
 
         # save scp number
         with open(path_prefix + 'current_scp.txt', 'w') as f:

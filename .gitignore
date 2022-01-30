@@ -5,3 +5,4 @@ upvotes.json
 last.txt
 .env
 ./ssl/
+./Tsde_polling_api/history/*
